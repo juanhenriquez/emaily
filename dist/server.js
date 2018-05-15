@@ -12,7 +12,8 @@ class Server {
         this.setup();
     }
     setup() {
-        const db = new connector_1.MongoDBConnector();
+        const mongodbConnectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/emaily';
+        const db = new connector_1.MongoDBConnector(mongodbConnectionString);
         db.connect()
             .then(() => console.log('Connected to MongoDB'));
         // The GraphQL endpoint

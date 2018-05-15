@@ -5,10 +5,14 @@ export class MongoDBConnector {
   static mongooseInstance: mongoose.Mongoose;
   static connection: mongoose.Connection;
 
-  constructor() { }
+  private connectionString: string;
+
+  constructor(connectionString: string) {
+    this.connectionString = connectionString;
+  }
 
   connect(): Promise<mongoose.Mongoose> {
-    return mongoose.connect('mongodb://localhost:27017/emaily')
+    return mongoose.connect(this.connectionString)
       .then((mongoose) => {
         MongoDBConnector.mongooseInstance = mongoose;
         MongoDBConnector.connection = mongoose.connection;

@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 class MongoDBConnector {
-    constructor() { }
+    constructor(connectionString) {
+        this.connectionString = connectionString;
+    }
     connect() {
-        return mongoose.connect('mongodb://localhost:27017/emaily')
+        return mongoose.connect(this.connectionString)
             .then((mongoose) => {
             MongoDBConnector.mongooseInstance = mongoose;
             MongoDBConnector.connection = mongoose.connection;

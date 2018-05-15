@@ -19,7 +19,8 @@ export class Server {
   }
 
   setup() {
-    const db = new MongoDBConnector();
+    const mongodbConnectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/emaily';
+    const db = new MongoDBConnector(mongodbConnectionString);
 
     db.connect()
       .then(() => console.log('Connected to MongoDB'));
