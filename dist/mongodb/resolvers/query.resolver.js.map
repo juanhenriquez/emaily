@@ -1,0 +1,1 @@
+{"version":3,"file":"query.resolver.js","sourceRoot":"","sources":["../../../server/mongodb/resolvers/query.resolver.ts"],"names":[],"mappings":";;AAAa,QAAA,QAAQ,GAAG;IACtB,OAAO,CAAC,MAAM,EAAE,EAAE,EAAE,EAAE,EAAE,OAAO;QAC7B,OAAO,OAAO,CAAC,KAAK,CAAC,IAAI,CAAC,QAAQ,CAAC,EAAE,CAAC,CAAC;IACzC,CAAC;CACF,CAAC"}

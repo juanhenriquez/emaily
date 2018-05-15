@@ -1,0 +1,1 @@
+{"version":3,"file":"mutations.resolver.js","sourceRoot":"","sources":["../../../server/mongodb/resolvers/mutations.resolver.ts"],"names":[],"mappings":";;AAAa,QAAA,SAAS,GAAG;IACvB,UAAU,CAAC,MAAM,EAAE,IAAI,EAAE,OAAO;QAC9B,OAAO,OAAO,CAAC,KAAK,CAAC,IAAI,CAAC,UAAU,CAAC,IAAI,CAAC,CAAC;IAC7C,CAAC;CACF,CAAC"}
