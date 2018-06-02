@@ -1,12 +1,15 @@
+require('dotenv').config();
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as passport from 'passport';
+import * as cookieSession from 'cookie-session';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
 
-// DB
 import { MongoDBConnector } from './mongodb/connector';
-
 import { schema, publicContext as mongodbContext } from './mongodb/schema';
+
+// routes
+import router from './routes';
 
 export class Server {
 
@@ -19,25 +22,38 @@ export class Server {
   }
 
   setup() {
-    const mongodbConnectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/emaily';
+    const mongodbConnectionString = process.env.MONGODB_URI;
     const db = new MongoDBConnector(mongodbConnectionString);
 
     db.connect()
       .then(() => console.log('Connected to MongoDB'));
 
-    // The GraphQL endpoint
+    this.server.use(cookieSession({
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      keys: [process.env.COOKIE_SECRET],
+    }));
+
+    this.server.use(passport.initialize());
+    this.server.use(passport.session());
+
+    this.server.use(router);
+
     this.server.use(
       '/graphql',
       bodyParser.json(),
-      graphqlExpress({
-        schema,
-        context: {
-          ...mongodbContext
+      graphqlExpress((req, res) => {
+        return {
+          schema,
+          context: {
+            req,
+            res,
+            viewer: req.user,
+            mongo: mongodbContext,
+          }
         }
       })
     );
 
-    // GraphiQL, a visual editor for queries
     this.server.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
   }
 

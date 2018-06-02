@@ -8,9 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const connector_1 = require("./../../connector");
 const user_schema_1 = require("./user.schema");
-const mongoose = connector_1.MongoDBConnector.mongooseInstance;
 class UserModel {
     constructor(data) {
         this.id = data.id;
@@ -19,15 +17,21 @@ class UserModel {
         this.email = data.email;
         this.createdAt = data.createdAt;
         this.updatedAt = data.updatedAt;
+        this.googleId = data.googleId;
     }
     get fullName() {
         return `${this.firstName} ${this.lastName}`;
     }
-    static getById(id) {
+    static getById(id, viewer = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundUser = yield user_schema_1.UserModelSchema.findById(id);
-            const user = new UserModel(foundUser);
-            return user;
+            console.log(viewer, id);
+            if (!viewer || viewer.id === id) {
+                const foundUser = yield user_schema_1.UserModelSchema.findById(id);
+                const user = new UserModel(foundUser);
+                return user;
+            }
+            throw new Error(`Can't access to the requested resource`);
+            ;
         });
     }
     static createUser(data) {
@@ -40,6 +44,12 @@ class UserModel {
             catch (e) {
                 console.log('Error: ', e);
             }
+        });
+    }
+    static findOrCreateWithGoogleAuth(googleId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const foundUser = yield user_schema_1.UserModelSchema.findOne({ googleId });
+            return foundUser ? new UserModel(foundUser) : yield this.createUser(Object.assign({ googleId }, data));
         });
     }
 }

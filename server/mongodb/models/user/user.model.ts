@@ -1,8 +1,5 @@
-import { MongoDBConnector } from './../../connector';
 import { IUserModel } from './user.interface';
 import { UserModelSchema } from './user.schema';
-
-const mongoose = MongoDBConnector.mongooseInstance;
 
 class UserModel {
 
@@ -12,6 +9,7 @@ class UserModel {
   email: string;
   createdAt: Date;
   updatedAt: Date;
+  googleId: string
 
   constructor(data: IUserModel) {
     this.id = data.id;
@@ -20,19 +18,25 @@ class UserModel {
     this.email = data.email;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
+    this.googleId = data.googleId;
   }
 
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  static async getById(id: string) {
-    const foundUser = await UserModelSchema.findById(id);
-    const user = new UserModel(foundUser);
-    return user;
+  static async getById(id: string, viewer = null) {
+    console.log(viewer, id);
+    if (!viewer || viewer.id === id) {
+      const foundUser = await UserModelSchema.findById(id);
+      const user = new UserModel(foundUser);
+      return user;
+    }
+
+    throw new Error(`Can't access to the requested resource`);;
   }
 
-  static async createUser(data: IUserModel): Promise<IUserModel> {
+  static async createUser(data: any): Promise<IUserModel> {
     const newUser = new UserModelSchema(data);
     try {
       await newUser.save();
@@ -40,6 +44,11 @@ class UserModel {
     } catch (e) {
       console.log('Error: ', e);
     }
+  }
+
+  static async findOrCreateWithGoogleAuth(googleId: string, data: { firstName: string, lastName: string, email: string }): Promise<any> {
+    const foundUser = await UserModelSchema.findOne({ googleId });
+    return foundUser ? new UserModel(foundUser) : await this.createUser({ googleId, ...data });
   }
 }
 

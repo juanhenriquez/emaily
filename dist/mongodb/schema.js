@@ -24,6 +24,8 @@ const Mutation = `
       email: String!,
       password: String!
     ): User
+
+    logout: User
   }
 `;
 const SchemaDefinition = `

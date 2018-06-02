@@ -4,6 +4,7 @@ const User = `
   type User {
     id: ID!
     email: String!
+    googleId: String
     firstName: String!
     lastName: String!
     fullName: String
